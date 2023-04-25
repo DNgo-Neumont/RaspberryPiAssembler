@@ -51,9 +51,9 @@ public class Main {
                         try {
                                 FileManagement.loadAssemblyFile(pathList.get(fileIndex).toString());
 
+
                                 
-                                
-                                AssemblyParser.parseFile(FileManagement.getLoadedFile(), FileManagement.getFileBufferedReader());
+                                AssemblyParser.parseFile(FileManagement.getLoadedAssemblyFile(), FileManagement.getFileBufferedReader());
 
 
 

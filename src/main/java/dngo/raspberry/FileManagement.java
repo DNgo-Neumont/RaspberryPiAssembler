@@ -15,20 +15,43 @@ import java.nio.file.StandardOpenOption;
 public class FileManagement {
     private static Path loadedFile = null;
 
-    public static Path getLoadedFile() {
-        return loadedFile;
-    }
+    private final static Path exportPath = FileSystems.getDefault().getPath("image_exports");
+    private final static Path importPath = FileSystems.getDefault().getPath("assembly_storage");
+
 
     public static void initAssemblyDirectory(){ 
-        if(Files.notExists(FileSystems.getDefault().getPath("assembly_storage"))){
+        if(Files.notExists(importPath)){
             try {
-                Files.createDirectories(FileSystems.getDefault().getPath("assembly_storage"));
+                Files.createDirectories(importPath);
             } catch (IOException e) {
                 System.out.println("Error creating local directory");
                 e.printStackTrace();
             }
         }
     }
+
+    public static void initExportDirectory(){
+        if(Files.notExists(exportPath)){
+            try{
+                Files.createDirectories(exportPath);
+            }catch(IOException e){
+                System.out.println("Error creating local directory");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void createImageFile(){
+        if(Files.notExists(Path.of(exportPath.toString(), "image7.img"))){
+            try {
+                Files.createFile(Path.of(exportPath.toString(), "image7.img"));
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     public static void loadAssemblyFile(String fileName) throws Exception{
 
