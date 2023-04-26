@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 // import java.nio.ByteBuffer;
 // import java.nio.channels.ByteChannel;
-import java.nio.file.FileSystems;
+// import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -35,6 +35,7 @@ public class Main {
                         System.out.println("Enter the name of the file you want to load: ");
                         try {
                             FileManagement.initAssemblyDirectory();
+                            FileManagement.initExportDirectory();
                         } catch (Exception e) {
                             System.out.println("Error creating assembly file directory; please retry");
                             e.printStackTrace();
@@ -42,21 +43,16 @@ public class Main {
                         }
                         int i = 1;
 
-                        List<Path> pathList =  Files.list(FileSystems.getDefault().getPath("assembly_storage")).collect(Collectors.toList());
+                        List<Path> pathList =  Files.list(FileManagement.getImportpath()).collect(Collectors.toList());
                         for(Path path : pathList){
                             System.out.println(i + ". " + path.toString());
                             i++;
                         }
                         int fileIndex = Integer.parseInt(userInput.readLine()) - 1;
                         try {
-                                FileManagement.loadAssemblyFile(pathList.get(fileIndex).toString());
-
-
-                                
-                                AssemblyParser.parseFile(FileManagement.getLoadedAssemblyFile(), FileManagement.getFileBufferedReader());
-
-
-
+                            FileManagement.loadAssemblyFile(pathList.get(fileIndex).toString());
+                            AssemblyParser.parseFile(FileManagement.getExportpath(), FileManagement.getLoadedAssemblyFile(), 
+                            FileManagement.getFileBufferedReader());
                         } catch (Exception e) {
                             System.out.println(e.getMessage());
                             e.printStackTrace();

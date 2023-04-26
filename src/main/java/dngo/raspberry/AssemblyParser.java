@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class AssemblyParser {
-    public static void parseFile(Path outputPath, BufferedReader fileBufferedReader){
+    public static void parseFile(Path inputPath, Path outputPath, BufferedReader fileBufferedReader){
         List<String> fileContents = fileBufferedReader.lines().collect(Collectors.toList());
 
         for(String line: fileContents){
@@ -32,20 +32,7 @@ public class AssemblyParser {
 
             System.out.println(littleEndianFormatHex(convBinarytoHex(commandTest.returnCommand())));
 
-            try {
-
-                FileOutputStream fileStream = new FileOutputStream(outputPath.toFile(), true);
-
-                short[] arrayToWrite = parseToShortArray(littleEndianFormatHex(convBinarytoHex(commandTest.returnCommand())));
-
-                for(int i = 0; i < arrayToWrite.length; i++){
-                    fileStream.write(arrayToWrite[i]);
-                }
-
-            } catch (NumberFormatException | IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            
 
             // try{ example conversions of hex and binary
             // splice strings as needed to create full commands
@@ -148,6 +135,23 @@ public class AssemblyParser {
         }
         return arrayToReturn;
 
+    }
+
+    public static void writeCommand(CommandBase command, Path outputPath){
+        try {
+
+            FileOutputStream fileStream = new FileOutputStream(outputPath.toFile(), true);
+
+            short[] arrayToWrite = parseToShortArray(littleEndianFormatHex(convBinarytoHex(command.returnCommand())));
+
+            for(int i = 0; i < arrayToWrite.length; i++){
+                fileStream.write(arrayToWrite[i]);
+            }
+
+        } catch (NumberFormatException | IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
 

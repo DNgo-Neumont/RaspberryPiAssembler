@@ -11,6 +11,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.stream.Collectors;
 
 public class FileManagement {
     private static Path loadedFile = null;
@@ -41,15 +42,27 @@ public class FileManagement {
         }
     }
 
-    public static void createImageFile(){
+    public static Path createImageFile(){
         if(Files.notExists(Path.of(exportPath.toString(), "image7.img"))){
             try {
                 Files.createFile(Path.of(exportPath.toString(), "image7.img"));
+                return Path.of(exportPath.toString(), "image7.img");
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }else{
+
+            try {
+                int numOfFiles = Files.list(exportPath).collect(Collectors.toList()).size();
+                Files.createFile(Path.of(exportPath.toString(), ("image7_(" + numOfFiles + ")_.img")));
+                return Path.of(exportPath.toString(), ("image7_(" + numOfFiles + ")_.img"));
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
+        return null;
     }
 
 
@@ -82,6 +95,14 @@ public class FileManagement {
         }else{
             throw new Exception("No loaded file!");
         }
+    }
+
+    public static Path getExportpath() {
+        return exportPath;
+    }
+
+    public static Path getImportpath() {
+        return importPath;
     }
 
 }
