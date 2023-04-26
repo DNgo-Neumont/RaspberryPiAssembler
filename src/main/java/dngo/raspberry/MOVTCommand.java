@@ -1,6 +1,5 @@
 package dngo.raspberry;
 
-import java.math.BigInteger;
 
 public class MOVTCommand extends CommandBase{
 
@@ -41,13 +40,15 @@ public class MOVTCommand extends CommandBase{
     @Override
     public String returnCommand() {
         String numericValueCommand = (getCond() + COMMAND_DEF + immFour + destRegister + immTwelve);
-        String binary = new BigInteger(numericValueCommand, 2).toString(2);
-
-        binary = String.format("%32s", binary);
-        binary = binary.replaceAll(" ", "0");
+        String binary = formatCommand(numericValueCommand);
 
         return binary;
+    }
+
+    @Override
+    public void buildCommand(String assemblyLine){
 
     }
+
     
 }

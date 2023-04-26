@@ -109,7 +109,7 @@ public class AssemblyParser {
         for(int i = 2; i < 9; i+=2){
             String charAtPosition = hexString.substring(prevIndex, i);
             prevIndex = i;
-            arrayToReturn[arrayToReturnIndex] = (short) (Short.valueOf(charAtPosition, 16) & 0xFF);
+            arrayToReturn[arrayToReturnIndex] = Short.valueOf(charAtPosition, 16);
             arrayToReturnIndex++;
         }
         System.out.println(Arrays.toString(arrayToReturn));
