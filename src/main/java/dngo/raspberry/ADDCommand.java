@@ -17,10 +17,30 @@ public class ADDCommand extends CommandBase{
     public void buildCommand(String assemblyLine) {
         String[] stringArray = assemblyLine.split(" ");
         
-        String condition = stringArray[0].replaceAll("ADD\\[\\]", "");
+        if(stringArray.length < 5){
+            String condition = stringArray[0];
+            condition = condition.replaceAll("ADD", "");
+            condition = condition.replaceAll("[\\[\\]]", "");
+            System.out.println(condition);
+            String[] registers = stringArray[1].strip().split(",");
+            String operand = stringArray[2].strip();
+            System.out.println(condition + " raw condition");
+            String binaryCondition = AssemblyParser.convHexToBinary(condition, 4);
+            System.out.println(binaryCondition + " formatted condition");
+            String registerOne = AssemblyParser.convHexToBinary(registers[0], 4);
+    
+            String registerTwo = AssemblyParser.convHexToBinary(registers[1], 4);
+            firstRegister = registerOne;
+            secondRegister = registerTwo;
+            immediateOperandBit = "1";
+            conditionCodeBit = "0";
+            this.operand = AssemblyParser.convHexToBinary(operand, 12);
+    
+            setCond(binaryCondition);
+        }
 
-        String[] registers = stringArray[1].strip().split(",");
-        String operand = stringArray[2].strip();
+        
+
 
 
     }

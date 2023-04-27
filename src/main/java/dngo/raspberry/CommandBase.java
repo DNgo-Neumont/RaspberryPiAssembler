@@ -27,4 +27,10 @@ public abstract class CommandBase {
         return binary;
     }
 
+    public String convConditionToBinary(String condition){
+        String binaryCondition = new BigInteger(condition).toString(2);
+        binaryCondition = String.format("%4s", binaryCondition);
+        binaryCondition = binaryCondition.replaceAll(" ", "0");
+        return binaryCondition;
+    }
 }
