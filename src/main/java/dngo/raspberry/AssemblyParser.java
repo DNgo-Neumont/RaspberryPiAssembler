@@ -33,7 +33,8 @@ public class AssemblyParser {
             System.out.println(littleEndianFormatHex(convBinarytoHex(commandTest.returnCommand())));
 
             
-            String testAddAssembly = "ADD[E] 3,4 001C";
+            String testAddAssembly = "ADD[E] IM{1} 3,4 SCODE{0} 001C";
+            String testSubAssembly = "SUB[E] IM{1} 6,6 SCODE{1} 0001";
 
             ADDCommand testAdd = new ADDCommand();
 
@@ -42,6 +43,14 @@ public class AssemblyParser {
             System.out.println(convBinarytoHex(testAdd.returnCommand()));
             System.out.println(testAdd.returnCommand());
             System.out.println(littleEndianFormatHex(convBinarytoHex(testAdd.returnCommand())));
+
+            SUBCommand testSUB = new SUBCommand();
+
+            testSUB.buildCommand(testSubAssembly);
+
+            System.out.println(convBinarytoHex(testSUB.returnCommand()));
+            System.out.println(testSUB.returnCommand());
+            System.out.println(littleEndianFormatHex(convBinarytoHex(testSUB.returnCommand())));
 
             // try{ example conversions of hex and binary
             // splice strings as needed to create full commands

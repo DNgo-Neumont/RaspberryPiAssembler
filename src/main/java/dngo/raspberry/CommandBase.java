@@ -27,6 +27,13 @@ public abstract class CommandBase {
         return binary;
     }
 
+    public boolean isZeroOrOneBit(String test){
+        if(Integer.parseInt(test) > 1 || Integer.parseInt(test) < 0){
+            return false;
+        }
+        return true;
+    }
+
     public String convConditionToBinary(String condition){
         String binaryCondition = new BigInteger(condition).toString(2);
         binaryCondition = String.format("%4s", binaryCondition);
