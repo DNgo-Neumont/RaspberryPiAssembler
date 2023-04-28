@@ -17,6 +17,10 @@ public class LDRSTRCommand extends CommandBase{
     
     private String offsetBits;
 
+    public void setCOMMAND_NAME(String COMMAND_NAME) {
+        this.COMMAND_NAME = COMMAND_NAME;
+    }
+
     @Override
     public String returnCommand() {
 
@@ -33,7 +37,7 @@ public class LDRSTRCommand extends CommandBase{
         condition = condition.replaceAll("[\\[\\]]", "");
         setCond(AssemblyParser.convHexToBinary(condition, 4));
 
-        String immediateOperandBit = stringArray[1].replace("[IM\\{\\}]", "");
+        String immediateOperandBit = stringArray[1].replaceAll("[IM\\{\\}]", "");
         if(!isZeroOrOneBit(immediateOperandBit)){
             throw new IllegalArgumentException("Invalid param given for immediateOperandBit!");
         }
@@ -80,7 +84,7 @@ public class LDRSTRCommand extends CommandBase{
         this.firstRegister = AssemblyParser.convHexToBinary(registers[0],4);
         this.secondRegister = AssemblyParser.convHexToBinary(registers[1],4);
 
-        this.offsetBits = AssemblyParser.convHexToBinary(stringArray[7], 12);
+        this.offsetBits = AssemblyParser.convHexToBinary(stringArray[8], 12);
     }
     
 }
