@@ -16,50 +16,71 @@ public class AssemblyParser {
         List<String> fileContents = fileBufferedReader.lines().collect(Collectors.toList());
 
         for(String line: fileContents){
+            if(line.contains("//")){ continue; }
+
             line = line.replace("\n", "");
             line = line.strip();
 
+            String[] lineArray = line.split(" ");
+
+            String commandName = lineArray[0].substring(0, lineArray[0].indexOf("["));
             
-            MOVTCommand commandTest = new MOVTCommand();
+            System.out.println(commandName);
 
-            commandTest.setCond("1110");
-            commandTest.setImmFour("0011");
-            commandTest.setDestRegister("0100");
-            commandTest.setImmTwelve("111100100000");
-            System.out.println(commandTest.returnCommand());
+            CommandBase command = CommandFactory.createCommand(commandName);
 
-            System.out.println(convBinarytoHex(commandTest.returnCommand()));
+            System.out.println(command.getClass().getName());
 
-            System.out.println(littleEndianFormatHex(convBinarytoHex(commandTest.returnCommand())));
+            command.buildCommand(line);
+            
+            System.out.println(command.returnCommand());
+
+            System.out.println(convBinarytoHex(command.returnCommand()));
+
+            System.out.println(littleEndianFormatHex(convBinarytoHex(command.returnCommand())));
+
+            writeCommand(command, outputPath);
+
+            // MOVTCommand commandTest = new MOVTCommand();
+
+            // commandTest.setCond("1110");
+            // commandTest.setImmFour("0011");
+            // commandTest.setDestRegister("0100");
+            // commandTest.setImmTwelve("111100100000");
+            // System.out.println(commandTest.returnCommand());
+
+            // System.out.println(convBinarytoHex(commandTest.returnCommand()));
+
+            // System.out.println(littleEndianFormatHex(convBinarytoHex(commandTest.returnCommand())));
 
             
-            String testAddAssembly = "ADD[E] IM{1} 3,4 SCODE{0} 001C";
-            String testSubAssembly = "SUB[E] IM{1} 6,6 SCODE{1} 0001";
-            String testLdrAssembly = "LDR[E] IM{0} PRI{0} UD{0} BW{0} WRB{0} LDST{0} 2,3 0000";
-            ADDCommand testAdd = new ADDCommand();
+            // String testAddAssembly = "ADD[E] IM{1} 3,4 SCODE{0} 001C";
+            // String testSubAssembly = "SUB[E] IM{1} 6,6 SCODE{1} 0001";
+            // String testLdrAssembly = "LDR[E] IM{0} PRI{0} UD{0} BW{0} WRB{0} LDST{0} 2,3 0000";
+            // ADDCommand testAdd = new ADDCommand();
 
-            testAdd.buildCommand(testAddAssembly);
+            // testAdd.buildCommand(testAddAssembly);
 
-            System.out.println(convBinarytoHex(testAdd.returnCommand()));
-            System.out.println(testAdd.returnCommand());
-            System.out.println(littleEndianFormatHex(convBinarytoHex(testAdd.returnCommand())));
+            // System.out.println(convBinarytoHex(testAdd.returnCommand()));
+            // System.out.println(testAdd.returnCommand());
+            // System.out.println(littleEndianFormatHex(convBinarytoHex(testAdd.returnCommand())));
 
-            SUBCommand testSUB = new SUBCommand();
+            // SUBCommand testSUB = new SUBCommand();
 
-            testSUB.buildCommand(testSubAssembly);
+            // testSUB.buildCommand(testSubAssembly);
 
-            System.out.println(convBinarytoHex(testSUB.returnCommand()));
-            System.out.println(testSUB.returnCommand());
-            System.out.println(littleEndianFormatHex(convBinarytoHex(testSUB.returnCommand())));
+            // System.out.println(convBinarytoHex(testSUB.returnCommand()));
+            // System.out.println(testSUB.returnCommand());
+            // System.out.println(littleEndianFormatHex(convBinarytoHex(testSUB.returnCommand())));
 
-            LDRSTRCommand testLdr = new LDRSTRCommand();
+            // LDRSTRCommand testLdr = new LDRSTRCommand();
 
-            //Set the command name before building - otherwise it won't parse correctly
-            testLdr.setCOMMAND_NAME("LDR");
-            testLdr.buildCommand(testLdrAssembly);
-            System.out.println(convBinarytoHex(testLdr.returnCommand()));
-            System.out.println(testLdr.returnCommand());
-            System.out.println(littleEndianFormatHex(convBinarytoHex(testLdr.returnCommand())));
+            // //Set the command name before building - otherwise it won't parse correctly
+            // testLdr.setCOMMAND_NAME("LDR");
+            // testLdr.buildCommand(testLdrAssembly);
+            // System.out.println(convBinarytoHex(testLdr.returnCommand()));
+            // System.out.println(testLdr.returnCommand());
+            // System.out.println(littleEndianFormatHex(convBinarytoHex(testLdr.returnCommand())));
 
             // try{ example conversions of hex and binary
             // splice strings as needed to create full commands
@@ -173,7 +194,10 @@ public class AssemblyParser {
 
             for(int i = 0; i < arrayToWrite.length; i++){
                 fileStream.write(arrayToWrite[i]);
+                fileStream.flush();
             }
+
+            fileStream.close();
 
         } catch (NumberFormatException | IOException e) {
             // TODO Auto-generated catch block

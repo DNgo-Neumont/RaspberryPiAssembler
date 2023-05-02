@@ -45,7 +45,9 @@ public class ADDCommand extends CommandBase{
 
         String registerTwo = AssemblyParser.convHexToBinary(registers[1], 4);
         firstRegister = registerOne;
+        // System.out.println(firstRegister);
         secondRegister = registerTwo;
+        // System.out.println(registerTwo);
         
         String immediateOperandBit = stringArray[1];
         immediateOperandBit = immediateOperandBit.replaceAll("[IM\\{\\}]", "");
@@ -77,7 +79,10 @@ public class ADDCommand extends CommandBase{
         String result = (getCond() + DATA_COMMAND_NIBBLE + immediateOperandBit + COMMAND_DEF + conditionCodeBit + firstRegister + secondRegister + operand);
         
         String binary = formatCommand(result);
-
+        // // String in = "oogabooga";
+        // String val = "4";   // use 4 here to insert spaces every 4 characters
+        // String testString = binary.replaceAll("(.{" + val + "})", "$1 ").trim();
+        // System.out.println(testString);
         return binary;
     }
     

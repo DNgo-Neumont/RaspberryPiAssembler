@@ -51,7 +51,7 @@ public class Main {
                         int fileIndex = Integer.parseInt(userInput.readLine()) - 1;
                         try {
                             FileManagement.loadAssemblyFile(pathList.get(fileIndex).toString());
-                            AssemblyParser.parseFile(FileManagement.createImageFile(), FileManagement.getLoadedAssemblyFile(), 
+                            AssemblyParser.parseFile(FileManagement.getLoadedAssemblyFile(), FileManagement.createImageFile(), 
                             FileManagement.getFileBufferedReader());
                         } catch (Exception e) {
                             System.out.println(e.getMessage());
