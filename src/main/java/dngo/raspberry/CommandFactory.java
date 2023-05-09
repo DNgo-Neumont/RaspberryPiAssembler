@@ -1,7 +1,7 @@
 package dngo.raspberry;
 
 public class CommandFactory {
-    enum CommandType {MOVT, MOVW, ADD, LDR, ORR, STR, SUB, B}
+    enum CommandType {MOVT, MOVW, ADD, LDR, ORR, STR, SUB, B, BX}
 
     public static CommandBase createCommand(String commandName){
         CommandBase commandResult;
@@ -36,6 +36,9 @@ public class CommandFactory {
                 break;
             case B:
                 commandResult = new BCommand();
+                break;
+            case BX:
+                commandResult = new BXCommand();
                 break;
             default:
                 throw new IllegalArgumentException("Illegal command passed: " + commandName);

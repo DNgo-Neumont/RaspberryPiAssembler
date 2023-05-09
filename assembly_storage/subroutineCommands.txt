@@ -2,6 +2,7 @@
 //ADD[E] IM{1} 4,3 SCODE{0} 001C
 //SUB[E] IM{1} 6,6 SCODE{1} 0001
 //LDR[E] IM{0} PRI{0} UD{0} BW{0} WRB{0} LDST{0} 2,3 0000
+//Branch offsets are 6 hex chars long for 24 bits - no more, no less.
 MOVW[E] {0} R{4} 0000
 MOVT[E] {3} R{4} 0F20
 ADD[E] IM{1} 4,2 SCODE{0} 0008

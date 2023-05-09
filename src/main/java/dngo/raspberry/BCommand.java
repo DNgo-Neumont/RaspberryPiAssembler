@@ -8,6 +8,29 @@ public class BCommand extends CommandBase {
 
     private String offsetString;
 
+    
+    /** 
+     * @return String
+     */
+    public String getLinkBit(){
+        return linkBit;
+    }
+
+    /**
+    * TO ONLY BE USED IN CASES OF LINK BIT BEING SET TO ON
+    @param calculatedOffset Computer generated offset for line to branch back to
+     **/
+    public void setOffset(String calculatedOffset){
+        offsetString = calculatedOffset;
+    }
+
+    public int getOffsetAsInt(){
+        if(!offsetString.isBlank()){
+            return Integer.valueOf(offsetString, 2);
+        }
+        return 0;
+    }
+
     @Override
     public String returnCommand() {
 
@@ -32,6 +55,10 @@ public class BCommand extends CommandBase {
         this.linkBit = linkBit;
 
         this.offsetString = AssemblyParser.convHexToBinary(stringArray[2], 24);
+
+        if(stringArray.length > 3){
+            setLabel(stringArray[3]);
+        }
 
     }
     

@@ -37,38 +37,41 @@ public class ADDCommand extends CommandBase{
         condition = condition.replaceAll("["+ COMMAND_NAME +"]", "");
         condition = condition.replaceAll("[\\[\\]]", "");
 
-        String[] registers = stringArray[2].strip().split(",");
+        String immediateOperandBit = stringArray[1];
+        immediateOperandBit = immediateOperandBit.replaceAll("[IM\\{\\}]", "");
+        if(!isZeroOrOneBit(immediateOperandBit)){
+            throw new IllegalArgumentException("Invalid param given for immediateOperandBit!");
+        }
+        
+        this.immediateOperandBit = immediateOperandBit;
 
-        String operand = stringArray[4].strip();
+        String[] registers = stringArray[2].strip().split(",");
         String binaryCondition = AssemblyParser.convHexToBinary(condition, 4);
         String registerOne = AssemblyParser.convHexToBinary(registers[0], 4);
-
+        
         String registerTwo = AssemblyParser.convHexToBinary(registers[1], 4);
         firstRegister = registerOne;
         // System.out.println(firstRegister);
         secondRegister = registerTwo;
         // System.out.println(registerTwo);
         
-        String immediateOperandBit = stringArray[1];
-        immediateOperandBit = immediateOperandBit.replaceAll("[IM\\{\\}]", "");
-        if(!isZeroOrOneBit(immediateOperandBit)){
-            throw new IllegalArgumentException("Invalid param given for immediateOperandBit!");
-        }
-
-        this.immediateOperandBit = immediateOperandBit;
         
-
         String conditionCodeBit = stringArray[3];
         conditionCodeBit = conditionCodeBit.replaceAll("[SCODE\\{\\}]", "");
         if(!isZeroOrOneBit(conditionCodeBit)){
             throw new IllegalArgumentException("Invalid param given for immediateOperandBit!");
         }
         this.conditionCodeBit = conditionCodeBit;
-    
+        
+        String operand = stringArray[4].strip();
         this.operand = AssemblyParser.convHexToBinary(operand, 12);
-
+        
         setCond(binaryCondition);
         
+        if(stringArray.length > 5){
+            setLabel(stringArray[5]);
+        }
+
 
 
 

@@ -14,10 +14,11 @@ import java.util.stream.Collectors;
 public class AssemblyParser {
     public static void parseFile(Path inputPath, Path outputPath, BufferedReader fileBufferedReader){
         List<String> fileContents = fileBufferedReader.lines().collect(Collectors.toList());
+        List<CommandBase> commandList = new ArrayList<>();
+        
+        fileContents = fileContents.stream().filter(line -> !line.contains("//")).toList();
 
         for(String line: fileContents){
-            if(line.contains("//")){ continue; }
-
             line = line.replace("\n", "");
             line = line.strip();
 
@@ -32,7 +33,49 @@ public class AssemblyParser {
             System.out.println(command.getClass().getName());
 
             command.buildCommand(line);
+
+            commandList.add(command);
+        } 
+
+        for(CommandBase command: commandList){
             
+            if(command.getClass().isAssignableFrom(BCommand.class)){
+                System.out.println("Assigned branch command");
+                BCommand bcommand = (BCommand) command;
+
+                if(bcommand.getLinkBit().equals("1")){
+                    //branch with link conf, find label attached and calc offset
+                    //Wanted behavior
+                    //We walk through all the lines in assembly
+                    //we grab the first command with the supplied label attached to this branch command
+                    //unless that command's already been calculated then we continue
+                    //
+                    int result = recurseForLabel(bcommand.getLabel(), commandList, commandList.indexOf(command), 0, null);
+
+                    System.out.println("offset: " + result);
+
+                    String binaryString = Integer.toBinaryString(result);
+                    System.out.println(binaryString);
+                    if(result < 0){
+                        //Done to fix the issue with integer.tobinaryString returning a 32 bit long string
+                        //Branch commands devote 24 bits to an offset - the first 8 bits control functionality
+                        binaryString = binaryString.substring(8, binaryString.length());
+                    }else{
+                        binaryString = String.format("%24s", binaryString).replaceAll(" ", "0");
+                    }
+
+                    System.out.println(binaryString);
+                    bcommand.setOffset(binaryString);
+
+                    System.out.println(bcommand.returnCommand());
+                }else{
+                    System.out.println("Link bit unset");
+                }
+
+            }
+
+            System.out.println(command.getClass());
+
             System.out.println(command.returnCommand());
 
             System.out.println(convBinarytoHex(command.returnCommand()));
@@ -40,57 +83,7 @@ public class AssemblyParser {
             System.out.println(littleEndianFormatHex(convBinarytoHex(command.returnCommand())));
 
             writeCommand(command, outputPath);
-
-            // MOVTCommand commandTest = new MOVTCommand();
-
-            // commandTest.setCond("1110");
-            // commandTest.setImmFour("0011");
-            // commandTest.setDestRegister("0100");
-            // commandTest.setImmTwelve("111100100000");
-            // System.out.println(commandTest.returnCommand());
-
-            // System.out.println(convBinarytoHex(commandTest.returnCommand()));
-
-            // System.out.println(littleEndianFormatHex(convBinarytoHex(commandTest.returnCommand())));
-
-            
-            // String testAddAssembly = "ADD[E] IM{1} 3,4 SCODE{0} 001C";
-            // String testSubAssembly = "SUB[E] IM{1} 6,6 SCODE{1} 0001";
-            // String testLdrAssembly = "LDR[E] IM{0} PRI{0} UD{0} BW{0} WRB{0} LDST{0} 2,3 0000";
-            // ADDCommand testAdd = new ADDCommand();
-
-            // testAdd.buildCommand(testAddAssembly);
-
-            // System.out.println(convBinarytoHex(testAdd.returnCommand()));
-            // System.out.println(testAdd.returnCommand());
-            // System.out.println(littleEndianFormatHex(convBinarytoHex(testAdd.returnCommand())));
-
-            // SUBCommand testSUB = new SUBCommand();
-
-            // testSUB.buildCommand(testSubAssembly);
-
-            // System.out.println(convBinarytoHex(testSUB.returnCommand()));
-            // System.out.println(testSUB.returnCommand());
-            // System.out.println(littleEndianFormatHex(convBinarytoHex(testSUB.returnCommand())));
-
-            // LDRSTRCommand testLdr = new LDRSTRCommand();
-
-            // //Set the command name before building - otherwise it won't parse correctly
-            // testLdr.setCOMMAND_NAME("LDR");
-            // testLdr.buildCommand(testLdrAssembly);
-            // System.out.println(convBinarytoHex(testLdr.returnCommand()));
-            // System.out.println(testLdr.returnCommand());
-            // System.out.println(littleEndianFormatHex(convBinarytoHex(testLdr.returnCommand())));
-
-            // try{ example conversions of hex and binary
-            // splice strings as needed to create full commands
-            //     System.out.println(convHexToBinary("0042"));
-            //     System.out.println(convBinarytoHex("11100011010000110100111100100000"));
-            // }catch(NumberFormatException NFE){
-            //     NFE.printStackTrace();
-            // }
-
-        } 
+        }
 
     }
 
@@ -203,6 +196,42 @@ public class AssemblyParser {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+
+
+    //needs refactoring - doesn't look forwards
+    public static int recurseForLabel(String label, List<CommandBase> commands, int currentIndex, int lineIndex, CommandBase branchToRemove){
+        // lineIndex = 0;
+        CommandBase lineToCheck = commands.get(lineIndex);
+        
+        if(lineToCheck.getLabel() != null && lineToCheck.getLabel().equals(label)){
+            List<CommandBase> branchCommands = commands.stream().filter(commandPredicate -> commandPredicate.getClass().isAssignableFrom(BCommand.class)).toList();
+
+            if(branchToRemove != null){
+                branchCommands.remove(branchToRemove);
+            }
+            
+            int calculatedIndex = Math.abs(currentIndex - lineIndex); 
+            // int calculatedIndex = currentIndex - lineIndex;
+
+            if(lineIndex < currentIndex){
+                calculatedIndex = (0-calculatedIndex) - 2;
+            }else{
+                calculatedIndex -= 2;
+            }
+
+            for(CommandBase branchCommand : branchCommands){
+                BCommand bcommand = (BCommand) branchCommand;
+                if(bcommand.getOffsetAsInt() == calculatedIndex){
+                    return recurseForLabel(label, branchCommands, currentIndex, lineIndex + 1, bcommand);
+                }
+            }
+
+            return calculatedIndex;
+        }else if(!((lineIndex + 1) > commands.size()-1)){
+            return recurseForLabel(label, commands, currentIndex, lineIndex + 1, null);
+        }
+        return -1;
     }
 
 
