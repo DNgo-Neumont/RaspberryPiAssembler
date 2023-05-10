@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class AssemblyParser {
+
+    static List<CommandBase> branchesCalculated = new ArrayList<>();
+
     public static void parseFile(Path inputPath, Path outputPath, BufferedReader fileBufferedReader){
         List<String> fileContents = fileBufferedReader.lines().collect(Collectors.toList());
         List<CommandBase> commandList = new ArrayList<>();
@@ -37,6 +40,11 @@ public class AssemblyParser {
             commandList.add(command);
         } 
 
+        //Done so branch commands do not reference eachother.
+        List<CommandBase> bcommandsWithLabels = commandList.stream().filter(predicate -> predicate.getLabel() != null && predicate.getClass().isAssignableFrom(BCommand.class)).toList();
+
+        branchesCalculated.addAll(bcommandsWithLabels);
+
         for(CommandBase command: commandList){
             
             if(command.getClass().isAssignableFrom(BCommand.class)){
@@ -50,7 +58,7 @@ public class AssemblyParser {
                     //we grab the first command with the supplied label attached to this branch command
                     //unless that command's already been calculated then we continue
                     //
-                    int result = recurseForLabel(bcommand.getLabel(), commandList, commandList.indexOf(command), 0, null);
+                    int result = recurseForLabel(bcommand.getLabel(), commandList, commandList.indexOf(command), 0);
 
                     System.out.println("offset: " + result);
 
@@ -200,19 +208,22 @@ public class AssemblyParser {
 
 
     //needs refactoring - doesn't look forwards
-    public static int recurseForLabel(String label, List<CommandBase> commands, int currentIndex, int lineIndex, CommandBase branchToRemove){
+    public static int recurseForLabel(String label, List<CommandBase> commands, int currentIndex, int lineIndex){
         // lineIndex = 0;
         CommandBase lineToCheck = commands.get(lineIndex);
         
-        if(lineToCheck.getLabel() != null && lineToCheck.getLabel().equals(label)){
-            List<CommandBase> branchCommands = commands.stream().filter(commandPredicate -> commandPredicate.getClass().isAssignableFrom(BCommand.class)).toList();
+        if(lineToCheck.getLabel() != null && lineToCheck.getLabel().equals(label) && !(branchesCalculated.contains(lineToCheck))){
 
-            if(branchToRemove != null){
-                branchCommands.remove(branchToRemove);
-            }
+            System.out.println("Checked command: ");
+            System.out.println(lineToCheck.getClass().getName());
+            System.out.println("Command signature: ");
+            System.out.println(lineToCheck.returnCommand());
             
             int calculatedIndex = Math.abs(currentIndex - lineIndex); 
+            System.out.println("Current index: " + currentIndex);
+            System.out.println("Line index: " + lineIndex);
             // int calculatedIndex = currentIndex - lineIndex;
+            System.out.println("Calculated index: " + calculatedIndex);
 
             if(lineIndex < currentIndex){
                 calculatedIndex = (0-calculatedIndex) - 2;
@@ -220,16 +231,11 @@ public class AssemblyParser {
                 calculatedIndex -= 2;
             }
 
-            for(CommandBase branchCommand : branchCommands){
-                BCommand bcommand = (BCommand) branchCommand;
-                if(bcommand.getOffsetAsInt() == calculatedIndex){
-                    return recurseForLabel(label, branchCommands, currentIndex, lineIndex + 1, bcommand);
-                }
-            }
+            System.out.println("Calculated index (aft transform): " + calculatedIndex);
 
             return calculatedIndex;
         }else if(!((lineIndex + 1) > commands.size()-1)){
-            return recurseForLabel(label, commands, currentIndex, lineIndex + 1, null);
+            return recurseForLabel(label, commands, currentIndex, lineIndex + 1);
         }
         return -1;
     }

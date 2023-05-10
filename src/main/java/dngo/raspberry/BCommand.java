@@ -24,6 +24,10 @@ public class BCommand extends CommandBase {
         offsetString = calculatedOffset;
     }
 
+    public String getOffset(){
+        return offsetString;
+    }
+
     public int getOffsetAsInt(){
         if(!offsetString.isBlank()){
             return Integer.valueOf(offsetString, 2);

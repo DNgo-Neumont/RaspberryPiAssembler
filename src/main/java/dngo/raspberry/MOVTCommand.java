@@ -70,6 +70,10 @@ public class MOVTCommand extends CommandBase{
 
         this.immTwelve = AssemblyParser.convHexToBinary(stringArray[3], 12);
 
+        if(stringArray.length > 4){
+            setLabel(stringArray[4]);
+        }
+
     }
 
     
