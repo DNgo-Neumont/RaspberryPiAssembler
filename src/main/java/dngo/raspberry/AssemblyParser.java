@@ -45,6 +45,8 @@ public class AssemblyParser {
 
         branchesCalculated.addAll(bcommandsWithLabels);
 
+        StringBuilder commandBuilder = new StringBuilder();
+
         for(CommandBase command: commandList){
             
             if(command.getClass().isAssignableFrom(BCommand.class)){
@@ -91,7 +93,11 @@ public class AssemblyParser {
             System.out.println(littleEndianFormatHex(convBinarytoHex(command.returnCommand())));
 
             writeCommand(command, outputPath);
+
+            commandBuilder.append(littleEndianFormatHex(convBinarytoHex(command.returnCommand()))).append("\n");
         }
+
+        System.out.println(commandBuilder.toString());
 
     }
 
@@ -130,6 +136,25 @@ public class AssemblyParser {
         return result;
     }
     
+
+    //Variable padding length - when needed just specify a power of two to make sure the end result is padded correctly
+    public static String convDecToBinary(String decimalString, int paddingLength) throws NumberFormatException{
+        String result = "";
+        try{
+            result = new BigInteger(decimalString, 10).toString(2);
+            // result = String.format("%32s", Integer.toBinaryString(result).replace(" ", "0"));
+            result = String.format(("%" + paddingLength + "s"), result);
+            result = result.replaceAll(" ", "0");
+
+
+        }catch(NumberFormatException NFE){
+            System.out.println("FATAL: Input decimal is not valid!");
+            throw NFE;
+        }
+        
+        return result;
+    }
+
     public static String littleEndianFormatHex(String hexToFormat){
         
         List<String> partitions = new ArrayList<>();

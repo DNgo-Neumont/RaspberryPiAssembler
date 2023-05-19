@@ -48,4 +48,12 @@ public abstract class CommandBase {
         binaryCondition = binaryCondition.replaceAll(" ", "0");
         return binaryCondition;
     }
+
+
+    @Override
+    public String toString(){
+        return returnCommand();
+    }
+
+
 }

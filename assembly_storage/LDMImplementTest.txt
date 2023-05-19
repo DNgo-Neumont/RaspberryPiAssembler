@@ -1,0 +1,38 @@
+//Remember, target register is second param in add and str
+//ADD[E] IM{1} 4,3 SCODE{0} 001C
+//SUB[E] IM{1} 6,6 SCODE{1} 0001
+//LDR[E] IM{0} PRI{0} UD{0} BW{0} WRB{0} LDST{0} 2,3 0000
+//Branch offsets are 6 hex chars long for 24 bits - no more, no less.
+MOVW[E] {0} R{13} 0000 
+MOVW[E] {0} R{4} 0000
+MOVT[E] {3} R{4} 0F20
+ADD[E] IM{1} 4,2 SCODE{0} 0008
+LDR[E] IM{0} PRI{0} UD{0} BW{0} WRB{0} LDST{1} 2,3 0000
+ORR[E] IM{1} 3,3 SCODE{0} 0008
+STR[E] IM{0} PRI{0} UD{0} BW{0} WRB{0} LDST{0} 2,3 0000
+ADD[E] IM{1} 4,3 SCODE{0} 001C startLabel
+MOVW[E] {0} R{2} 0000
+MOVT[E] {0} R{2} 0020
+STR[E] IM{0} PRI{0} UD{0} BW{0} WRB{0} LDST{0} 3,2 0000
+STM[E] PRI{0} UD{1} BW{0} WRB{1} LDST{0} 13 {R0,R12}
+MOVW[E] {0} R{6} 0900 
+MOVT[E] {3} R{6} 000D
+STR[E] IM{0} PRI{0} UD{1} BW{0} WRB{1} LDST{0} 13,0 0004
+B[E] L{1} 000000 delayLabel
+LDM[E] PRI{0} UD{0} BW{0} WRB{1} LDST{1} 13 {R0,R12}
+ADD[E] IM{1} 4,3 SCODE{0} 0028
+MOVW[E] {0} R{2} 0000
+MOVT[E] {0} R{2} 0020
+STM[E] PRI{0} UD{0} BW{0} WRB{1} LDST{0} 13 {R0,R12}
+MOVW[E] {4} R{6} 0240 
+MOVT[E] {F} R{6} 0000
+STR[E] IM{0} PRI{0} UD{1} BW{0} WRB{1} LDST{0} 13,0 0004
+STR[E] IM{0} PRI{0} UD{0} BW{0} WRB{0} LDST{0} 3,2 0000
+B[E] L{1} 000000 delayLabel
+LDM[E] PRI{0} UD{0} BW{0} WRB{1} LDST{1} 13 {R0,R12}
+B[E] L{1} 000000 startLabel
+//Place a delay here for a LDR{EA}
+LDR[E] IM{0} PRI{1} UD{0} BW{0} WRB{0} LDST{1} 13,6 0004 delayLabel
+SUB[E] IM{1} 6,6 SCODE{1} 0001
+B[5] L{0} FFFFFD
+BX[E] E

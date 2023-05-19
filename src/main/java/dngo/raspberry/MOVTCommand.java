@@ -64,7 +64,7 @@ public class MOVTCommand extends CommandBase{
 
         String destRegister = stringArray[2].replaceAll("[R\\{\\}]", "");
 
-        destRegister = AssemblyParser.convHexToBinary(destRegister, 4);
+        destRegister = AssemblyParser.convDecToBinary(destRegister, 4);
 
         this.destRegister = destRegister;
 
