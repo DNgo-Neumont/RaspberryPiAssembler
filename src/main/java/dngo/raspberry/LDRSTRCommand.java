@@ -86,8 +86,8 @@ public class LDRSTRCommand extends CommandBase{
 
         this.offsetBits = AssemblyParser.convHexToBinary(stringArray[8], 12);
         
-        if(stringArray.length > 8){
-            setLabel(stringArray[8]);
+        if(stringArray.length > 9){
+            setLabel(stringArray[9]);
         }
     }
 

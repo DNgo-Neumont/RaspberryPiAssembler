@@ -46,6 +46,7 @@ public class AssemblyParser {
         branchesCalculated.addAll(bcommandsWithLabels);
 
         StringBuilder commandBuilder = new StringBuilder();
+        StringBuilder commandBinaryBuilder = new StringBuilder();
 
         for(CommandBase command: commandList){
             
@@ -95,9 +96,11 @@ public class AssemblyParser {
             writeCommand(command, outputPath);
 
             commandBuilder.append(littleEndianFormatHex(convBinarytoHex(command.returnCommand()))).append("\n");
+            commandBinaryBuilder.append(command.returnCommand()).append("\n");
         }
 
         System.out.println(commandBuilder.toString());
+        System.out.println(commandBinaryBuilder.toString());
 
     }
 
@@ -226,7 +229,6 @@ public class AssemblyParser {
             fileStream.close();
 
         } catch (NumberFormatException | IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

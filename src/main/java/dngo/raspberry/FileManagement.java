@@ -48,7 +48,6 @@ public class FileManagement {
                 Files.createFile(Path.of(exportPath.toString(), "image7.img"));
                 return Path.of(exportPath.toString(), "image7.img");
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }else{
@@ -58,7 +57,6 @@ public class FileManagement {
                 Files.createFile(Path.of(exportPath.toString(), ("image7_(" + numOfFiles + ")_.img")));
                 return Path.of(exportPath.toString(), ("image7_(" + numOfFiles + ")_.img"));
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
